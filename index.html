@@ -2,229 +2,1089 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Venu — Unscripted</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>For Venu.</title>
+<meta name="description" content="An unfinished thought, finally finished.">
+
+<!-- Google Fonts: a quiet serif for the voice, a clean sans for the room, a mono for the machine's memory -->
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:#050509;color:#f4f2ed;font-family:Inter,sans-serif;overflow-x:hidden}
-canvas{position:fixed;inset:0;z-index:-5}
-.noise{position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.cursor{position:fixed;width:280px;height:280px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(150,130,255,.10),transparent 65%);transform:translate(-50%,-50%);z-index:-1}
-section{min-height:100vh;padding:80px 24px;display:flex;align-items:center;justify-content:center}
-.wrap{width:min(1050px,100%)}
-.reveal{opacity:0;transform:translateY(40px);transition:1.1s cubic-bezier(.16,1,.3,1)}
-.reveal.visible{opacity:1;transform:none}
-.label,.mono{font-family:"DM Mono",monospace}
-.label{color:#777681;font-size:11px;letter-spacing:4px;text-transform:uppercase}
-.time{font:12px "DM Mono",monospace;letter-spacing:4px;color:#777681;margin-bottom:35px}
-#opening{text-align:center}
-.open-title{font:400 clamp(80px,18vw,210px)/.8 "DM Serif Display",serif;letter-spacing:-9px}
-.open-title span{font-style:italic}
-.open-sub{margin-top:42px;color:#888793;font-size:14px;letter-spacing:2px}
-.enter{margin-top:90px;display:inline-flex;align-items:center;gap:12px;color:#aaa8b1;font:11px "DM Mono",monospace;letter-spacing:3px;cursor:pointer}
-.enter-dot{width:7px;height:7px;border-radius:50%;background:white;animation:pulse 1.7s infinite}
-@keyframes pulse{50%{opacity:.2;transform:scale(.6)}}
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --black: #08080a;
+  --black-2: #0d0d10;
+  --ink: #f4f2ee;
+  --ink-dim: rgba(244,242,238,0.62);
+  --ink-faint: rgba(244,242,238,0.34);
+  --lavender: #b9aee0;
+  --champagne: #d9c9a0;
+  --line: rgba(244,242,238,0.14);
+  --line-soft: rgba(244,242,238,0.08);
 
-.memory-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:70px;align-items:center}
-.memory-title{font:400 clamp(48px,7vw,90px)/.95 "DM Serif Display",serif;margin-top:25px}
-.memory-title i{color:#aaa}
-.terminal{border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.025);border-radius:18px;overflow:hidden;box-shadow:0 30px 100px rgba(0,0,0,.35)}
-.terminal-head{height:42px;border-bottom:1px solid rgba(255,255,255,.11);display:flex;align-items:center;padding:0 16px;gap:7px}
-.dot{width:8px;height:8px;border-radius:50%;background:#555}
-.terminal-body{padding:30px;min-height:300px;font:13px/2 "DM Mono",monospace;color:#aaa8b1}
-.green{color:#b9e6bd}.white{color:#f5f3ee}
+  --serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'IBM Plex Mono', 'SF Mono', monospace;
 
-#gallery{background:linear-gradient(180deg,transparent,rgba(255,255,255,.012),transparent)}
-.gallery-head{text-align:center;margin-bottom:55px}
-.gallery-head h2{font:400 clamp(50px,8vw,95px)/.9 "DM Serif Display",serif;margin-top:22px}
-.photos{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.photo-card{position:relative;overflow:hidden;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:#0b0b10}
-.photo-card img{width:100%;height:620px;object-fit:cover;display:block;filter:saturate(.9);transition:transform 1s cubic-bezier(.16,1,.3,1),filter 1s}
-.photo-card:hover img{transform:scale(1.045);filter:saturate(1.05)}
-.photo-caption{position:absolute;left:20px;right:20px;bottom:20px;padding:15px 17px;border:1px solid rgba(255,255,255,.12);border-radius:15px;background:rgba(0,0,0,.38);backdrop-filter:blur(14px);font:11px "DM Mono",monospace;letter-spacing:2px;color:#ddd}
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
-#venu{text-align:center}
-.venu-name{font:400 clamp(75px,15vw,180px)/.8 "DM Serif Display",serif;letter-spacing:-7px}
-.venu-name em{font-style:italic}
-.venu-desc{max-width:600px;margin:55px auto 0;color:#96949e;line-height:2;font-size:16px}
-.traits{margin:65px auto 0;display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
-.trait{padding:12px 18px;border:1px solid rgba(255,255,255,.11);border-radius:100px;font-size:11px;letter-spacing:2px;color:#aaa8b1}
-
-#letter{align-items:flex-start;padding-top:140px}
-.letter-card{max-width:760px;margin:auto}
-.letter-card h2{font:400 clamp(55px,8vw,100px)/.95 "DM Serif Display",serif;margin:25px 0 55px}
-.letter-card p{color:#aaa8b1;font-size:17px;line-height:2;margin-bottom:27px}
-.letter-card strong{color:#f3f0ea;font-weight:500}
-.big-sorry{margin-top:65px;font:italic clamp(45px,7vw,85px) "DM Serif Display",serif}
-
-.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.11),transparent)}
-#final{text-align:center}
-.final-title{font:400 clamp(58px,10vw,120px)/.9 "DM Serif Display",serif}
-.final-title em{display:block;font-style:italic}
-.final-text{max-width:620px;margin:45px auto;color:#8d8b94;line-height:2}
-.final-btn{border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.035);color:#eee;border-radius:100px;padding:17px 30px;font:11px "DM Mono",monospace;letter-spacing:2px;cursor:pointer;transition:.4s}
-.final-btn:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
-.secret{max-width:650px;margin:50px auto 0;display:none;font:clamp(28px,5vw,50px)/1.3 "DM Serif Display",serif}
-.footer{padding:40px 20px;text-align:center;color:#414049;font:9px "DM Mono",monospace;letter-spacing:3px}
-
-@media(max-width:750px){
- section{padding:70px 22px}
- .memory-grid,.photos{grid-template-columns:1fr}
- .open-title{letter-spacing:-5px}
- .venu-name{letter-spacing:-4px}
- .letter-card p{font-size:15px;line-height:1.9}
- .terminal-body{padding:22px;font-size:11px}
- .photo-card img{height:520px}
+  --vh: 1vh;
 }
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+html, body{
+  margin: 0; padding: 0;
+  background: var(--black);
+  color: var(--ink);
+  overflow-x: hidden;
+  width: 100%;
+}
+body{
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img{ max-width: 100%; display: block; }
+button{ font-family: inherit; background: none; border: none; color: inherit; cursor: pointer; }
+::selection{ background: var(--lavender); color: var(--black); }
+
+a{ color: inherit; }
+
+:focus-visible{
+  outline: 1px solid var(--lavender);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   AMBIENT LAYERS — grain + cursor glow + particles
+   ============================================================ */
+.grain{
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.cursor-glow{
+  position: fixed;
+  top: 0; left: 0;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle, rgba(185,174,224,0.06) 0%, rgba(185,174,224,0) 70%);
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: opacity 0.4s var(--ease-soft);
+}
+@media (hover: none){ .cursor-glow{ display: none; } }
+
+#particles{
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   LAYOUT PRIMITIVES
+   ============================================================ */
+main{ position: relative; z-index: 2; }
+
+.section{
+  position: relative;
+  min-height: 100vh;
+  min-height: calc(var(--vh) * 100);
+  padding: clamp(32px, 8vw, 120px) clamp(24px, 7vw, 100px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.section-inner{
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.eyebrow{
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::before{
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--ink-faint);
+  display: inline-block;
+}
+
+.reveal{
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.1s var(--ease), transform 1.1s var(--ease);
+}
+.reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+.reveal-line{
+  overflow: hidden;
+}
+.reveal-line span{
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.reveal-line.is-visible span{ opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   SCREEN 00 — GATE
+   ============================================================ */
+#gate{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  transition: opacity 1.4s var(--ease-soft), filter 1.4s var(--ease-soft), visibility 1.4s;
+}
+#gate.hidden{
+  opacity: 0;
+  filter: brightness(1.4);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gate-time{
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-soft) 0.3s forwards;
+  margin-bottom: clamp(28px, 6vh, 56px);
+}
+
+.gate-for{
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-soft) 1.1s forwards;
+  margin-bottom: 8px;
+}
+
+.gate-name{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(64px, 16vw, 168px);
+  line-height: 0.95;
+  color: var(--ink);
+  opacity: 0;
+  filter: blur(6px);
+  animation: nameIn 1.6s var(--ease-soft) 1.6s forwards;
+  background: linear-gradient(180deg, var(--ink) 60%, var(--lavender) 140%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.gate-sub{
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: clamp(13px, 2vw, 16px);
+  color: var(--ink-faint);
+  margin-top: clamp(28px, 6vh, 48px);
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-soft) 2.8s forwards;
+  font-style: italic;
+}
+
+.gate-enter{
+  margin-top: clamp(40px, 8vh, 72px);
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-soft) 3.4s forwards;
+}
+
+.enter-btn{
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 16px 30px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transition: border-color 0.5s var(--ease-soft), background 0.5s var(--ease-soft), letter-spacing 0.5s var(--ease-soft);
+}
+.enter-btn:hover, .enter-btn:focus-visible{
+  border-color: var(--lavender);
+  background: rgba(185,174,224,0.06);
+  letter-spacing: 0.28em;
+}
+
+@keyframes fadeIn{ to{ opacity: 1; } }
+@keyframes nameIn{ to{ opacity: 1; filter: blur(0); } }
+
+/* ============================================================
+   SECTION 01 — THE NIGHT (system log)
+   ============================================================ */
+#the-night{
+  background: linear-gradient(180deg, var(--black) 0%, var(--black-2) 100%);
+}
+
+.log-frame{
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.015);
+  padding: clamp(24px, 5vw, 48px);
+  font-family: var(--mono);
+}
+
+.log-head{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#log-lines{
+  min-height: 190px;
+  font-size: clamp(13px, 1.6vw, 15px);
+  color: var(--ink-dim);
+  line-height: 2;
+}
+#log-lines .log-line{ opacity: 0; }
+#log-lines .log-line.shown{ opacity: 1; }
+#log-lines .prompt{ color: var(--lavender); margin-right: 8px; }
+#log-lines .cursor-blink{
+  display: inline-block;
+  width: 8px; height: 15px;
+  background: var(--ink-dim);
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+  vertical-align: middle;
+}
+@keyframes blink{ 50%{ opacity: 0; } }
+
+.night-statement{
+  font-family: var(--serif);
+  font-size: clamp(28px, 5vw, 46px);
+  line-height: 1.3;
+  margin: clamp(48px, 8vw, 80px) 0 0;
+}
+.night-statement em{ color: var(--ink-faint); font-style: italic; font-weight: 300; }
+
+/* ============================================================
+   SECTION 02 — VENU
+   ============================================================ */
+#venu-name{
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.venu-label{
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  margin-bottom: 12px;
+}
+.venu-display{
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(84px, 20vw, 220px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  margin: 0 0 clamp(40px, 8vw, 72px);
+  position: relative;
+}
+.venu-copy{
+  max-width: 620px;
+  margin: 0 auto;
+  font-size: clamp(16px, 2.2vw, 19px);
+  color: var(--ink-dim);
+  font-weight: 300;
+}
+.venu-copy strong{
+  font-weight: 500;
+  color: var(--ink);
+}
+.venu-traits{
+  display: flex;
+  gap: clamp(16px, 4vw, 36px);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: clamp(36px, 7vw, 56px);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.venu-traits span{ position: relative; padding-bottom: 4px; }
+
+/* ============================================================
+   SECTION 03 — PHOTO EXPERIENCE
+   ============================================================ */
+#memory{
+  padding-top: clamp(60px, 10vw, 140px);
+  padding-bottom: clamp(60px, 10vw, 140px);
+}
+.memory-label{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.memory-grid{
+  position: relative;
+  margin-top: clamp(40px, 6vw, 64px);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.frame-primary{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 78vh;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #111;
+}
+.frame-primary img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 1.2s var(--ease-soft), filter 1.2s var(--ease-soft);
+  filter: saturate(0.94) contrast(1.02);
+}
+@media (hover: hover){
+  .frame-primary:hover img{ transform: scale(1.08); }
+}
+.frame-caption{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(15px, 2vw, 19px);
+  color: var(--ink-dim);
+  margin-top: 18px;
+}
+
+.frame-secondary{
+  position: relative;
+  width: min(72%, 420px);
+  aspect-ratio: 4 / 5;
+  margin-top: clamp(-70px, -10vw, -140px);
+  margin-left: auto;
+  margin-right: clamp(0px, 2vw, 40px);
+  overflow: hidden;
+  border-radius: 4px;
+  background: #111;
+  border: 6px solid var(--black);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+}
+.frame-secondary img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 1.2s var(--ease-soft);
+  filter: saturate(0.94) contrast(1.02);
+}
+@media (hover: hover){
+  .frame-secondary:hover img{ transform: scale(1.08); }
+}
+.frame-secondary .frame-caption{
+  text-align: right;
+  padding-right: 4px;
+}
+
+@media (max-width: 640px){
+  .frame-secondary{
+    width: 84%;
+    margin-top: -48px;
+  }
+}
+
+/* ============================================================
+   SECTION 04 — THE APOLOGY (letter)
+   ============================================================ */
+#letter{
+  background: var(--black-2);
+}
+.letter-headline{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(30px, 5.2vw, 56px);
+  line-height: 1.25;
+  max-width: 780px;
+  margin-bottom: clamp(48px, 8vw, 84px);
+}
+.letter-body{
+  max-width: 660px;
+}
+.letter-body p{
+  font-size: clamp(16px, 2.1vw, 19px);
+  line-height: 1.85;
+  color: var(--ink-faint);
+  margin: 0 0 1.4em;
+  transition: color 0.6s var(--ease-soft);
+}
+.letter-body p.is-active{ color: var(--ink); }
+.letter-body p.salutation{ font-family: var(--serif); font-style: italic; font-size: clamp(20px, 3vw, 26px); color: var(--ink); }
+.letter-body p.signature{ font-family: var(--serif); font-style: italic; color: var(--ink); margin-top: 2em; }
+
+/* ============================================================
+   SECTION 05 — NO EXPECTATIONS
+   ============================================================ */
+#no-expectations{
+  text-align: center;
+  align-items: center;
+}
+.ne-stack{
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(34px, 7.2vw, 84px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.ne-stack .dim{ color: var(--ink-faint); font-weight: 300; }
+.ne-follow{
+  max-width: 520px;
+  margin: clamp(36px, 6vw, 56px) auto 0;
+  font-size: clamp(15px, 2vw, 17px);
+  color: var(--ink-dim);
+  font-weight: 300;
+}
+
+/* ============================================================
+   SECTION 06 — THE LITTLE THINGS
+   ============================================================ */
+#little-things{
+  background: var(--black-2);
+}
+.lt-list{
+  margin-top: clamp(40px, 7vw, 64px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 3vw, 28px);
+}
+.lt-list li{
+  list-style: none;
+  font-family: var(--serif);
+  font-size: clamp(24px, 5vw, 44px);
+  font-weight: 400;
+  color: var(--ink-faint);
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: clamp(14px, 2.4vw, 22px);
+  transition: color 0.7s var(--ease-soft), padding-left 0.7s var(--ease-soft);
+}
+.lt-list li.is-visible{ color: var(--ink); }
+.lt-list li span.num{
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-right: 18px;
+  vertical-align: middle;
+}
+
+/* ============================================================
+   SECTION 07 — FINAL
+   ============================================================ */
+#final{
+  text-align: center;
+  align-items: center;
+  border-bottom: none;
+  min-height: 100vh;
+  min-height: calc(var(--vh) * 100);
+}
+.final-headline{
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(42px, 9vw, 108px);
+  line-height: 1.05;
+}
+.final-headline em{ font-style: italic; color: var(--lavender); }
+.final-sub{
+  margin-top: clamp(28px, 5vw, 44px);
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: var(--ink-dim);
+  max-width: 560px;
+  margin-left: auto; margin-right: auto;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.last-thing-btn{
+  margin-top: clamp(48px, 8vw, 72px);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 16px 30px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transition: border-color 0.5s var(--ease-soft), background 0.5s var(--ease-soft);
+}
+.last-thing-btn:hover, .last-thing-btn:focus-visible{
+  border-color: var(--champagne);
+  background: rgba(217,201,160,0.06);
+}
+.last-thing-btn[hidden]{ display: none; }
+
+.final-reveal{
+  margin-top: clamp(40px, 7vw, 64px);
+  max-width: 560px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 1s var(--ease-soft), max-height 1.2s var(--ease-soft), margin 1s var(--ease-soft);
+}
+.final-reveal.is-open{
+  opacity: 1;
+  max-height: 400px;
+  margin-top: clamp(40px, 7vw, 64px);
+}
+.final-reveal p{
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(19px, 3vw, 26px);
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 0.7em;
+}
+.final-stamp{
+  margin-top: clamp(24px, 5vw, 40px);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   MUSIC TOGGLE
+   ============================================================ */
+.music-toggle{
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 50;
+  width: 44px; height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8,8,10,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.4s var(--ease-soft), opacity 0.6s var(--ease-soft);
+  opacity: 0;
+  pointer-events: none;
+}
+.music-toggle.armed{ opacity: 1; pointer-events: auto; }
+.music-toggle:hover, .music-toggle:focus-visible{ border-color: var(--lavender); }
+.music-toggle svg{ width: 16px; height: 16px; fill: var(--ink-dim); }
+.music-toggle[aria-pressed="true"] svg{ fill: var(--lavender); }
+
+/* ============================================================
+   PROGRESS THREAD
+   ============================================================ */
+.thread{
+  position: fixed;
+  left: 0; top: 0;
+  width: 2px; height: 100%;
+  z-index: 50;
+  background: transparent;
+  pointer-events: none;
+}
+.thread-fill{
+  width: 100%;
+  background: linear-gradient(180deg, var(--lavender), var(--champagne));
+  height: 0%;
+  transition: height 0.1s linear;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  *{
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .gate-time, .gate-for, .gate-name, .gate-sub, .gate-enter{ opacity: 1 !important; filter: none !important; }
+  .reveal{ opacity: 1; transform: none; }
+  .reveal-line span{ opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   SMALL SCREEN HYGIENE
+   ============================================================ */
+@media (max-width: 420px){
+  .section{ padding-left: 20px; padding-right: 20px; }
+}
+
+html{ scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior: auto; } }
+
 </style>
 </head>
 <body>
-<canvas id="space"></canvas>
-<div class="noise"></div>
-<div class="cursor" id="cursor"></div>
 
-<section id="opening">
-<div class="wrap reveal">
-<div class="time">07 AUGUST · 03:00 AM</div>
-<div class="open-title"><span>For</span><br>Venu.</div>
-<div class="open-sub">one unfinished thing · finally finished</div>
-<div class="enter" onclick="document.getElementById('memory').scrollIntoView()"><div class="enter-dot"></div>ENTER</div>
-</div>
+<!-- ambient layers -->
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="thread" aria-hidden="true"><div class="thread-fill" id="threadFill"></div></div>
+
+<!-- ============================================================
+     GATE / OPENING SCREEN
+     ============================================================ -->
+<section id="gate" role="dialog" aria-label="Opening">
+  <p class="gate-time">07 AUGUST · 03:00 AM</p>
+  <p class="gate-for">For</p>
+  <h1 class="gate-name">Venu.</h1>
+  <p class="gate-sub">One unfinished thought, finally finished.</p>
+  <div class="gate-enter">
+    <button class="enter-btn" id="enterBtn">Enter →</button>
+  </div>
 </section>
 
-<section id="memory">
-<div class="wrap">
-<div class="memory-grid">
-<div class="reveal">
-<div class="label">MEMORY / 01</div>
-<div class="memory-title">I tried to<br>build this<br><i>that night.</i></div>
-</div>
-<div class="terminal reveal">
-<div class="terminal-head"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-<div class="terminal-body">
-<div>&gt; booting project...</div>
-<div>&gt; date: 07-08 / 03:00 AM</div>
-<div>&gt; purpose: <span class="white">say something important</span></div><br>
-<div>&gt; status: <span class="green">FAILED</span></div>
-<div>&gt; reason: not capable enough.</div><br>
-<div>&gt; restarting...</div>
-<div>&gt; present day.</div>
-<div>&gt; capability: <span class="green">READY</span></div><br>
-<div class="white">&gt; completing unfinished message...</div>
-</div>
-</div>
-</div>
-</div>
-</section>
+<main id="main" aria-hidden="true">
 
-<section id="gallery">
-<div class="wrap">
-<div class="gallery-head reveal">
-<div class="label">MEMORY / 02</div>
-<h2>A little piece<br><i>of you.</i></h2>
-</div>
-<div class="photos">
-<div class="photo-card reveal">
-<img src="IMG_0269.jpeg" alt="Venu">
-<div class="photo-caption">THE SMILE THAT DESERVES TO BE REMEMBERED</div>
-</div>
-<div class="photo-card reveal">
-<img src="IMG_0270.jpeg" alt="Venu">
-<div class="photo-caption">UNSCRIPTED · JUST BEING YOU</div>
-</div>
-</div>
-</div>
-</section>
+  <!-- ============================================================
+       SECTION 01 — THE NIGHT
+       ============================================================ -->
+  <section class="section" id="the-night">
+    <div class="section-inner">
+      <p class="eyebrow reveal">07.08 · 03:00 AM</p>
+      <div class="log-frame reveal">
+        <div class="log-head">
+          <span>SYSTEM LOG</span>
+          <span id="logStatus">STATUS: RUNNING</span>
+        </div>
+        <div id="log-lines">
+          <div class="log-line"><span class="prompt">&gt;</span>starting something important…</div>
+          <div class="log-line"><span class="prompt">&gt;</span>intention: say what words couldn't</div>
+          <div class="log-line"><span class="prompt">&gt;</span>status: incomplete</div>
+        </div>
+      </div>
+      <p class="night-statement reveal">
+        I tried. <em>I couldn't.</em><br>
+        Not because it didn't matter —<br>
+        but because I didn't know how to build it yet.<br>
+        <em>Today, I do.</em>
+      </p>
+    </div>
+  </section>
 
-<section id="venu">
-<div class="wrap reveal">
-<div class="label">HER NAME IS</div>
-<div class="venu-name"><em>Venu</em></div>
-<div class="venu-desc">
-Chetana Rajput to the world.<br>
-Venu to the person who calls her that with affection.
-<br><br>
-Confident. Dashing. Real. Completely herself.
-<br><br>
-And someone whose friendship means more than I probably said out loud.
-</div>
-<div class="traits">
-<div class="trait">DASHING</div>
-<div class="trait">STRONG</div>
-<div class="trait">REAL</div>
-<div class="trait">UNSCRIPTED</div>
-</div>
-</div>
-</section>
+  <!-- ============================================================
+       SECTION 02 — VENU
+       ============================================================ -->
+  <section class="section" id="venu-name">
+    <div class="section-inner">
+      <p class="venu-label reveal">HER NAME IS</p>
+      <h2 class="venu-display reveal">Venu</h2>
+      <p class="venu-copy reveal">
+        <strong>Chetana Rajput</strong> to the world.<br>
+        Venu to the people who know her differently.
+      </p>
+      <div class="venu-traits reveal">
+        <span>Confident</span>
+        <span>Dashing</span>
+        <span>Real</span>
+        <span>Unscripted</span>
+      </div>
+    </div>
+  </section>
 
-<div class="divider"></div>
+  <!-- ============================================================
+       SECTION 03 — PHOTO EXPERIENCE
+       ============================================================ -->
+  <section class="section" id="memory">
+    <div class="section-inner">
+      <p class="memory-label reveal">MEMORY / 02</p>
+      <div class="memory-grid">
+        <figure class="frame-primary reveal" data-parallax>
+          <img src="IMG_0269.jpeg" alt="A candid photograph of Venu" loading="lazy">
+        </figure>
+        <figcaption class="frame-caption reveal">Just being you.</figcaption>
 
-<section id="letter">
-<div class="wrap">
-<div class="letter-card reveal">
-<div class="label">MESSAGE / 01</div>
-<h2>There is<br>something I owe you.</h2>
-<p>Venu,</p>
-<p>I should have said this much earlier. Some things take time to understand, but that doesn't make the delay right.</p>
-<p>A few months ago, things from my past affected the way I treated you. And because of that, <strong>I hurt you.</strong></p>
-<p>I don't have an excuse for it. My situation, my past, or whatever was going on in my head does not justify the way I made you feel.</p>
-<p><strong>The mistake was mine.</strong></p>
-<p>And what makes me feel worse is that someone who gave me such a genuine friendship ended up getting hurt because of my mistakes.</p>
-<p>You are not just “a friend” to me. What we have always had — the trust, the bond, the little things — has real value to me.</p>
-<p>So I am not asking you for anything today. Not immediate forgiveness. Not an answer. Not an explanation.</p>
-<p>I just wanted to say one thing honestly.</p>
-<div class="big-sorry">I'm genuinely sorry, Venu.</div>
-</div>
-</div>
-</section>
+        <figure class="frame-secondary reveal" data-parallax>
+          <img src="IMG_0270.jpeg" alt="A second candid photograph of Venu" loading="lazy">
+        </figure>
+        <figcaption class="frame-caption reveal">Unscripted.</figcaption>
+      </div>
+    </div>
+  </section>
 
-<section id="final">
-<div class="wrap reveal">
-<div class="label">END / BUT NOT REALLY</div>
-<div class="final-title">Some people<em>matter.</em></div>
-<div class="final-text">
-And you are one of those people.<br><br>
-I don't want a webpage to decide the future of our friendship.<br><br>
-I only wanted to finally say, with complete honesty, the words I was too late to say properly.
-</div>
-<button class="final-btn" onclick="revealSecret()">ONE LAST THING</button>
-<div class="secret" id="secret">
-“Thank you for being Venu.<br><br>
-And I'm sorry I didn't understand your value sooner.” 🤍
-</div>
-</div>
-</section>
+  <!-- ============================================================
+       SECTION 04 — THE APOLOGY
+       ============================================================ -->
+  <section class="section" id="letter">
+    <div class="section-inner">
+      <p class="eyebrow reveal">A LETTER</p>
+      <h2 class="letter-headline reveal">There is something I owe you.</h2>
+      <div class="letter-body">
+        <p class="salutation letter-p">Venu,</p>
+        <p class="letter-p">I should have said this much earlier.</p>
+        <p class="letter-p">A few months ago, things from my past affected the way I treated you. And because of that, I hurt you.</p>
+        <p class="letter-p">I don't have an excuse for it.</p>
+        <p class="letter-p">My past, my situation, or whatever was happening in my head doesn't justify the way I made you feel.</p>
+        <p class="letter-p">The mistake was mine.</p>
+        <p class="letter-p">And what makes me feel worse is that someone who gave me such a genuine friendship ended up getting hurt because of my mistakes.</p>
+        <p class="letter-p">You are not just "a friend" to me.</p>
+        <p class="letter-p">Our friendship, the trust, the conversations, the little things — they have real value to me.</p>
+        <p class="letter-p">So I'm not asking you for anything.</p>
+        <p class="letter-p">Not immediate forgiveness. Not an answer. Not an explanation.</p>
+        <p class="letter-p">I just wanted to say one thing honestly.</p>
+        <p class="signature letter-p">I'm genuinely sorry, Venu.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="footer">UNSCRIPTED LIFE · MADE WITH HONESTY · 07 AUGUST · 03:00 AM</div>
+  <!-- ============================================================
+       SECTION 05 — NO EXPECTATIONS
+       ============================================================ -->
+  <section class="section" id="no-expectations">
+    <div class="section-inner">
+      <p class="ne-stack reveal">
+        No expectations.<br>
+        No pressure.<br>
+        <span class="dim">Just one honest apology.</span>
+      </p>
+      <p class="ne-follow reveal">
+        I don't want a webpage to decide the future of our friendship.
+        I only wanted to finally say the words I was too late to say properly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — THE LITTLE THINGS
+       ============================================================ -->
+  <section class="section" id="little-things">
+    <div class="section-inner">
+      <p class="eyebrow reveal">THINGS WORTH REMEMBERING</p>
+      <ul class="lt-list">
+        <li class="lt-item"><span class="num">01</span>The conversations.</li>
+        <li class="lt-item"><span class="num">02</span>The laughter.</li>
+        <li class="lt-item"><span class="num">03</span>The random moments.</li>
+        <li class="lt-item"><span class="num">04</span>The friendship.</li>
+        <li class="lt-item"><span class="num">05</span>The fact that you mattered.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — FINAL
+       ============================================================ -->
+  <section class="section" id="final">
+    <div class="section-inner">
+      <h2 class="final-headline reveal">Some people <em>matter.</em></h2>
+      <p class="final-sub reveal">
+        And you are one of those people.<br><br>
+        Whatever happens next, I'm still grateful that our friendship happened.
+      </p>
+      <button class="last-thing-btn reveal" id="lastThingBtn">One last thing →</button>
+      <div class="final-reveal" id="finalReveal">
+        <p>Thank you for being Venu.</p>
+        <p>And I'm sorry I didn't understand your value sooner.</p>
+        <p class="final-stamp">— 03:00 AM, finally finished.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- optional, silent-by-default music toggle -->
+<button class="music-toggle" id="musicToggle" aria-pressed="false" aria-label="Toggle ambient sound" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h4l5 5V5L7 10H3z"/></svg>
+</button>
 
 <script>
-const canvas=document.getElementById("space"),ctx=canvas.getContext("2d");
-let w,h,particles=[];
-function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
-resize();addEventListener("resize",resize);
-for(let i=0;i<130;i++)particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.4,s:Math.random()*.25+.05});
-function animate(){
-ctx.clearRect(0,0,w,h);
-particles.forEach(p=>{
-p.y-=p.s;if(p.y<0){p.y=h;p.x=Math.random()*w}
-ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,.45)";ctx.fill();
-});
-requestAnimationFrame(animate)}
-animate();
+(function(){
+  "use strict";
 
-const cursor=document.getElementById("cursor");
-addEventListener("mousemove",e=>cursor.animate({left:e.clientX+"px",top:e.clientY+"px"},{duration:600,fill:"forwards"}));
+  /* ----------------------------------------------------------
+     Viewport height fix for mobile browser chrome
+     ---------------------------------------------------------- */
+  function setVH(){
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  setVH();
+  window.addEventListener('resize', setVH);
+  window.addEventListener('orientationchange', setVH);
 
-const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")}),{threshold:.12});
-document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function revealSecret(){
-const s=document.getElementById("secret");s.style.display="block";
-s.animate([{opacity:0,transform:"translateY(25px)"},{opacity:1,transform:"translateY(0)"}],{duration:1200,easing:"cubic-bezier(.16,1,.3,1)",fill:"forwards"});
-}
+  /* ----------------------------------------------------------
+     GATE — enter transition
+     ---------------------------------------------------------- */
+  var gate = document.getElementById('gate');
+  var main = document.getElementById('main');
+  var enterBtn = document.getElementById('enterBtn');
+
+  function enterExperience(){
+    gate.classList.add('hidden');
+    main.removeAttribute('aria-hidden');
+    document.body.style.overflow = '';
+    startLog();
+    var musicToggle = document.getElementById('musicToggle');
+    if (musicToggle) musicToggle.removeAttribute('hidden');
+    setTimeout(function(){ musicToggle && musicToggle.classList.add('armed'); }, 600);
+    window.removeEventListener('keydown', onGateKey);
+  }
+
+  function onGateKey(e){
+    if (e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      enterExperience();
+    }
+  }
+
+  document.body.style.overflow = 'hidden';
+  enterBtn.addEventListener('click', enterExperience);
+  window.addEventListener('keydown', onGateKey);
+
+  /* ----------------------------------------------------------
+     Cursor ambient glow (desktop only)
+     ---------------------------------------------------------- */
+  var glow = document.getElementById('cursorGlow');
+  var hasHover = window.matchMedia('(hover: hover)').matches;
+  if (hasHover){
+    window.addEventListener('mousemove', function(e){
+      glow.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px) translate(-50%,-50%)';
+    }, { passive: true });
+  }
+
+  /* ----------------------------------------------------------
+     Particle field — quiet, sparse, drifting
+     ---------------------------------------------------------- */
+  var canvas = document.getElementById('particles');
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var particleCount = window.innerWidth < 640 ? 26 : 55;
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = document.documentElement.scrollHeight;
+  }
+
+  function initParticles(){
+    particles = [];
+    for (var i = 0; i < particleCount; i++){
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2 + 0.3,
+        speed: Math.random() * 0.12 + 0.02,
+        drift: (Math.random() - 0.5) * 0.06,
+        alpha: Math.random() * 0.35 + 0.08
+      });
+    }
+  }
+
+  function drawParticles(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < particles.length; i++){
+      var p = particles[i];
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(244,242,238,' + p.alpha + ')';
+      ctx.fill();
+      p.y -= p.speed;
+      p.x += p.drift;
+      if (p.y < -10){
+        p.y = canvas.height + 10;
+        p.x = Math.random() * canvas.width;
+      }
+    }
+  }
+
+  var rafId;
+  function loop(){
+    drawParticles();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  if (!reduceMotion){
+    resizeCanvas();
+    initParticles();
+    loop();
+    window.addEventListener('resize', function(){
+      resizeCanvas();
+      initParticles();
+    });
+  }
+
+  /* ----------------------------------------------------------
+     Scroll-triggered reveals
+     ---------------------------------------------------------- */
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+  /* letter paragraphs — highlight as they cross a reading band */
+  var letterObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      entry.target.classList.toggle('is-active', entry.isIntersecting);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.letter-p').forEach(function(el){ letterObserver.observe(el); });
+
+  /* little-things list — sequential emphasis */
+  var ltObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){ entry.target.classList.add('is-visible'); }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.lt-item').forEach(function(el){ ltObserver.observe(el); });
+
+  /* ----------------------------------------------------------
+     Subtle parallax on the photo frames (desktop)
+     ---------------------------------------------------------- */
+  var parallaxEls = document.querySelectorAll('[data-parallax]');
+  if (hasHover && !reduceMotion){
+    window.addEventListener('scroll', function(){
+      var vh = window.innerHeight;
+      parallaxEls.forEach(function(el){
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2 - vh / 2;
+        var shift = center * -0.06;
+        el.style.transform = 'translateY(' + shift + 'px)';
+      });
+    }, { passive: true });
+  }
+
+  /* ----------------------------------------------------------
+     System log — elegant typewriter reveal
+     ---------------------------------------------------------- */
+  var logStarted = false;
+  function startLog(){
+    if (logStarted) return;
+    logStarted = true;
+    var lines = document.querySelectorAll('#log-lines .log-line');
+    var delay = 400;
+    lines.forEach(function(line, i){
+      setTimeout(function(){
+        line.classList.add('shown');
+      }, delay * (i + 1));
+    });
+    setTimeout(function(){
+      var status = document.getElementById('logStatus');
+      if (status) status.textContent = 'STATUS: COMPLETE';
+    }, delay * (lines.length + 1) + 300);
+  }
+
+  /* ----------------------------------------------------------
+     Final section — "One last thing"
+     ---------------------------------------------------------- */
+  var lastThingBtn = document.getElementById('lastThingBtn');
+  var finalReveal = document.getElementById('finalReveal');
+  lastThingBtn.addEventListener('click', function(){
+    finalReveal.classList.add('is-open');
+    lastThingBtn.setAttribute('hidden', '');
+    finalReveal.setAttribute('tabindex', '-1');
+    finalReveal.focus();
+  });
+
+  /* ----------------------------------------------------------
+     Optional ambient audio toggle (no autoplay, no external file
+     dependency — page works perfectly with this left untouched)
+     ---------------------------------------------------------- */
+  var musicToggle = document.getElementById('musicToggle');
+  var audioCtx, isPlaying = false, gainNode, oscillators = [];
+
+  function startAmbient(){
+    if (!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      gainNode.connect(audioCtx.destination);
+      [130.81, 196.00].forEach(function(freq){
+        var osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        osc.connect(gainNode);
+        osc.start();
+        oscillators.push(osc);
+      });
+    }
+    gainNode.gain.setTargetAtTime(0.028, audioCtx.currentTime, 1.2);
+  }
+  function stopAmbient(){
+    if (gainNode && audioCtx){
+      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.8);
+    }
+  }
+
+  musicToggle.addEventListener('click', function(){
+    isPlaying = !isPlaying;
+    musicToggle.setAttribute('aria-pressed', String(isPlaying));
+    if (isPlaying){ startAmbient(); } else { stopAmbient(); }
+  });
+
+  /* ----------------------------------------------------------
+     Scroll progress thread
+     ---------------------------------------------------------- */
+  var threadFill = document.getElementById('threadFill');
+  function updateThread(){
+    var doc = document.documentElement;
+    var scrollTop = window.scrollY || doc.scrollTop;
+    var height = doc.scrollHeight - doc.clientHeight;
+    var pct = height > 0 ? (scrollTop / height) * 100 : 0;
+    threadFill.style.height = pct + '%';
+  }
+  window.addEventListener('scroll', updateThread, { passive: true });
+  updateThread();
+
+})();
 </script>
 </body>
 </html>
