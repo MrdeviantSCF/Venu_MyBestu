@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070512">
+<title>For Venu — A Little Universe</title>
+<meta name="description" content="A quiet apology, a few thoughts, and a little universe made for Venu.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#06040d;
+  --bg2:#0b0718;
+  --white:#fbf9ff;
+  --muted:rgba(251,249,255,.67);
+  --faint:rgba(251,249,255,.38);
+  --violet:#9b6cff;
+  --purple:#7357ff;
+  --pink:#ff5fa2;
+  --rose:#ff7895;
+  --peach:#ffc08a;
+  --gold:#f8dc9a;
+  --blue:#62b8ff;
+  --cyan:#6ce9ff;
+  --line:rgba(255,255,255,.12);
+  --glass:rgba(255,255,255,.055);
+  --serif:"Playfair Display",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;
+  --mono:"DM Mono",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;background:var(--bg);color:var(--white);
+  font-family:var(--sans);font-weight:300;line-height:1.65;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+body.lock{overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{max-width:100%;display:block}
+::selection{background:var(--pink);color:white}
+a{color:inherit;text-decoration:none}
+
+/* Ambient universe */
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.noise{
+  position:fixed;inset:0;z-index:80;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.ambient{
+  position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(115,87,255,.12),transparent 28%),
+    radial-gradient(circle at 88% 25%,rgba(255,95,162,.09),transparent 26%),
+    radial-gradient(circle at 55% 92%,rgba(98,184,255,.07),transparent 28%);
+}
+.light{
+  position:fixed;width:560px;height:560px;border-radius:50%;z-index:2;
+  pointer-events:none;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(155,108,255,.11),rgba(255,95,162,.035) 42%,transparent 72%);
+  filter:blur(4px);mix-blend-mode:screen;
+}
+main{position:relative;z-index:3}
+.section{
+  position:relative;min-height:100vh;padding:clamp(80px,10vw,150px) clamp(22px,7vw,100px);
+  display:flex;align-items:center;overflow:hidden;isolation:isolate;
+}
+.inner{width:min(1080px,100%);margin:auto;position:relative;z-index:4}
+.eyebrow{
+  font:500 11px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--faint);display:flex;gap:12px;align-items:center;margin:0 0 28px;
+}
+.eyebrow:before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--violet),var(--pink))}
+.reveal{opacity:0;transform:translateY(32px);filter:blur(8px);transition:1.1s var(--ease)}
+.reveal.show{opacity:1;transform:none;filter:none}
+.gradient{
+  background:linear-gradient(105deg,var(--white),#cbb9ff 30%,#ff86ba 58%,var(--gold) 82%,var(--white));
+  background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:gradient 9s ease-in-out infinite;
+}
+@keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.orb{
+  position:absolute;border-radius:50%;filter:blur(85px);opacity:.48;pointer-events:none;
+  animation:float 14s ease-in-out infinite;
+}
+.orb.purple{background:var(--purple)}
+.orb.pink{background:var(--pink);animation-delay:-4s}
+.orb.blue{background:var(--blue);animation-delay:-8s}
+@keyframes float{50%{transform:translate(5%,-7%) scale(1.12)}}
+
+/* Intro gate */
+#gate{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;text-align:center;
+  background:#05030a;overflow:hidden;padding:25px;transition:1.25s var(--ease);
+}
+#gate.out{opacity:0;visibility:hidden;pointer-events:none}
+.gate-aurora{position:absolute;inset:-20%;
+  background:
+  radial-gradient(circle at 35% 45%,rgba(115,87,255,.30),transparent 25%),
+  radial-gradient(circle at 70% 55%,rgba(255,95,162,.22),transparent 24%),
+  radial-gradient(circle at 50% 85%,rgba(248,220,154,.10),transparent 22%);
+  filter:blur(50px);animation:aurora 10s ease-in-out infinite alternate}
+@keyframes aurora{to{transform:translate(2%,-3%) scale(1.06)}}
+.gate-content{position:relative;z-index:2}
+.gate-date{font:500 11px var(--mono);letter-spacing:.22em;color:#bda9ff;margin-bottom:42px}
+.gate-for{font:500 12px var(--mono);letter-spacing:.5em;text-transform:uppercase;color:var(--faint)}
+.gate-name{
+  margin:7px 0 22px;font:italic 500 clamp(78px,18vw,205px)/.86 var(--serif);
+  letter-spacing:-.04em;
+}
+.gate-sub{font:italic 400 clamp(15px,2vw,19px) var(--serif);color:var(--muted)}
+.enter{
+  margin-top:54px;padding:1px;border-radius:999px;
+  background:linear-gradient(100deg,var(--violet),var(--pink),var(--gold),var(--blue),var(--violet));
+  background-size:300% 100%;animation:gradient 6s linear infinite;display:inline-block;
+}
+.enter button{
+  border-radius:999px;background:rgba(6,4,13,.9);padding:15px 30px;
+  font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;
+}
+
+/* Floating progress */
+.progress{
+  position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:50;
+  font:400 10px var(--mono);color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.progress .bar{height:100px;width:1px;background:rgba(255,255,255,.12);position:relative}
+.progress .fill{position:absolute;inset:0 0 auto;height:0;background:linear-gradient(var(--violet),var(--pink),var(--gold))}
+@media(max-width:700px){.progress{display:none}}
+
+/* Hero / opening */
+#opening{min-height:105vh;background:
+  radial-gradient(circle at 50% 45%,rgba(115,87,255,.16),transparent 32%),
+  linear-gradient(180deg,#070411,#10081f 55%,#08040f)}
+.opening-title{font:italic 500 clamp(60px,13vw,155px)/.9 var(--serif);margin:0;letter-spacing:-.045em}
+.opening-copy{max-width:600px;font-size:clamp(17px,2.2vw,21px);color:var(--muted);margin-top:34px}
+.scroll-cue{margin-top:70px;font:500 10px var(--mono);letter-spacing:.2em;color:var(--faint);display:flex;gap:12px;align-items:center}
+.scroll-cue i{display:block;width:46px;height:1px;background:linear-gradient(90deg,var(--violet),transparent)}
+
+/* Night */
+#night{background:linear-gradient(180deg,#10081f,#090719)}
+.log{
+  border:1px solid rgba(155,108,255,.25);border-radius:22px;padding:0;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  backdrop-filter:blur(18px);box-shadow:0 35px 100px rgba(61,35,140,.24),inset 0 1px rgba(255,255,255,.08);
+}
+.log-top{display:flex;justify-content:space-between;padding:17px 20px;border-bottom:1px solid var(--line);font:500 10px var(--mono);letter-spacing:.12em;color:var(--faint)}
+.status{color:var(--pink)}
+.log-body{padding:28px 24px;font:400 13px/2 var(--mono);color:var(--muted);min-height:190px}
+.log-line{opacity:0;transform:translateY(6px);transition:.7s var(--ease)}
+.log-line.show{opacity:1;transform:none}
+.prompt{color:var(--pink);margin-right:8px}
+.night-thought{
+  font:400 clamp(31px,5.6vw,67px)/1.22 var(--serif);letter-spacing:-.025em;margin:65px 0 0;
+}
+.night-thought em{color:#a99bbd}
+.night-note{max-width:620px;color:var(--muted);font-size:17px;margin-top:30px}
+
+/* Venu identity */
+#venu{
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(155,108,255,.25),transparent 30%),
+    radial-gradient(circle at 72% 72%,rgba(255,95,162,.13),transparent 25%),
+    #130b25;
+}
+.name-kicker{font:500 11px var(--mono);letter-spacing:.32em;color:var(--faint)}
+.venu-name{font:italic 500 clamp(105px,23vw,250px)/.82 var(--serif);margin:30px 0 35px}
+.venu-sub{font-size:clamp(16px,2.2vw,20px);color:var(--muted)}
+.traits{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:50px}
+.trait{
+  padding:10px 17px;border:1px solid rgba(255,255,255,.12);border-radius:999px;
+  background:rgba(255,255,255,.035);backdrop-filter:blur(8px);
+  font:500 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;
+}
+.trait:nth-child(1){color:#c5b2ff}.trait:nth-child(2){color:#ff9ac6}.trait:nth-child(3){color:#8ed2ff}.trait:nth-child(4){color:#f8dc9a}
+
+/* Photos */
+#photos{background:linear-gradient(180deg,#130b25,#221025,#261525)}
+.photo-intro{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:50px}
+.photo-title{font:400 clamp(40px,7vw,82px)/1 var(--serif);margin:0;letter-spacing:-.035em}
+.photo-copy{max-width:340px;color:var(--muted);font-size:15px}
+.gallery{position:relative;min-height:850px}
+.photo-card{position:absolute;border-radius:20px;overflow:hidden;background:#140d19;border:1px solid rgba(255,255,255,.14);box-shadow:0 45px 110px rgba(0,0,0,.45)}
+.photo-card img{width:100%;height:100%;object-fit:cover;transition:1.2s var(--ease)}
+.photo-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(5,2,10,.65))}
+.photo-card:hover img{transform:scale(1.055)}
+.photo-one{width:min(62%,590px);height:min(760px,72vw);left:4%;top:0;transform:rotate(-2deg)}
+.photo-two{width:min(43%,410px);height:min(570px,58vw);right:4%;top:270px;transform:rotate(3deg)}
+.photo-caption{position:absolute;z-index:2;left:25px;bottom:22px;font:italic 22px var(--serif);color:white}
+.photo-number{position:absolute;z-index:2;right:20px;top:20px;font:500 9px var(--mono);letter-spacing:.15em}
+@media(max-width:700px){
+  .photo-intro{display:block}.photo-copy{margin-top:18px}
+  .gallery{min-height:920px}.photo-one{width:86%;height:610px;left:2%;}.photo-two{width:69%;height:450px;right:0;top:465px}
+}
+
+/* Thoughts */
+#thoughts{
+  background:
+   radial-gradient(circle at 15% 35%,rgba(98,184,255,.11),transparent 25%),
+   radial-gradient(circle at 85% 65%,rgba(255,95,162,.11),transparent 25%),
+   #08091a;
+}
+.thought-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:70px;align-items:center}
+.big-thought{font:italic 400 clamp(43px,7vw,82px)/1.12 var(--serif);margin:0;letter-spacing:-.035em}
+.thought-text{color:var(--muted);font-size:17px;line-height:1.9}
+.thought-text p{margin:0 0 25px}
+.quote{
+  margin-top:38px;padding:24px 0 24px 24px;border-left:1px solid var(--pink);
+  color:var(--white);font:italic 20px/1.6 var(--serif);
+}
+@media(max-width:800px){.thought-grid{grid-template-columns:1fr;gap:40px}}
+
+/* Apology */
+#apology{
+  background:
+    radial-gradient(circle at 75% 15%,rgba(248,220,154,.10),transparent 24%),
+    radial-gradient(circle at 20% 85%,rgba(255,95,162,.12),transparent 28%),
+    linear-gradient(160deg,#180918,#2a0e1e 48%,#150817);
+}
+.apology-head{font:italic 400 clamp(44px,7vw,85px)/1.05 var(--serif);max-width:900px;margin:0 0 55px}
+.letter{
+  max-width:820px;padding:clamp(28px,5vw,60px);border-radius:24px;
+  border:1px solid rgba(248,220,154,.16);
+  background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  backdrop-filter:blur(20px);box-shadow:0 45px 110px rgba(72,7,35,.42),inset 0 1px rgba(255,255,255,.08)
+}
+.letter p{font-size:clamp(16px,2vw,19px);line-height:1.95;color:rgba(255,255,255,.62);margin:0 0 22px}
+.letter .hello,.letter .strong{font-family:var(--serif);font-style:italic;color:white}
+.letter .strong{color:var(--gold);font-size:clamp(21px,3vw,29px);text-shadow:0 0 28px rgba(248,220,154,.2)}
+.letter .sorry{
+  margin-top:38px;font:italic 500 clamp(29px,5vw,52px)/1.2 var(--serif);
+}
+.letter .sign{margin-top:35px;color:var(--faint);font:500 10px var(--mono);letter-spacing:.18em;text-transform:uppercase}
+
+/* Mindset */
+#mindset{background:linear-gradient(180deg,#150817,#0b0820)}
+.mindset-wrap{display:grid;grid-template-columns:.7fr 1.3fr;gap:70px}
+.mindset-label{font:500 10px var(--mono);letter-spacing:.2em;color:var(--faint)}
+.mindset-list{display:grid;gap:14px}
+.mind-card{
+  padding:25px 28px;border:1px solid rgba(255,255,255,.10);border-radius:18px;
+  background:rgba(255,255,255,.035);transition:.5s var(--ease);
+}
+.mind-card:hover{transform:translateX(8px);border-color:rgba(155,108,255,.35);background:rgba(155,108,255,.06)}
+.mind-card b{display:block;font:italic 400 26px var(--serif);margin-bottom:7px}
+.mind-card span{color:var(--muted);font-size:14px}
+@media(max-width:800px){.mindset-wrap{grid-template-columns:1fr;gap:35px}}
+
+/* No pressure */
+#space{
+  min-height:90vh;text-align:center;
+  background:
+   radial-gradient(circle at 50% 50%,rgba(115,87,255,.18),transparent 34%),
+   #070511;
+}
+.space-title{font:400 clamp(52px,10vw,120px)/1 var(--serif);letter-spacing:-.045em;margin:0}
+.space-title span{display:block}
+.space-title .pink{color:#ff8fbd}.space-title .gold{color:var(--gold)}
+.space-copy{max-width:600px;margin:35px auto 0;color:var(--muted);font-size:17px}
+
+/* Dreams */
+#dreams{
+  background:
+    radial-gradient(circle at 20% 20%,rgba(98,184,255,.14),transparent 25%),
+    radial-gradient(circle at 80% 80%,rgba(255,95,162,.10),transparent 25%),
+    linear-gradient(180deg,#060817,#0a1025);
+}
+.dream-head{font:italic 400 clamp(45px,7vw,85px)/1.05 var(--serif);margin:0;max-width:800px}
+.dream-intro{color:var(--muted);max-width:650px;font-size:17px;margin:25px 0 55px}
+.dreams{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dream{
+  min-height:260px;padding:28px;border-radius:20px;border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  position:relative;overflow:hidden;transition:.6s var(--ease)
+}
+.dream:hover{transform:translateY(-8px);border-color:rgba(103,232,249,.28)}
+.dream:before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;filter:blur(55px);opacity:.16;right:-60px;top:-60px;background:var(--blue)}
+.dream:nth-child(2):before{background:var(--pink)}.dream:nth-child(3):before{background:var(--gold)}
+.dream-num{font:500 10px var(--mono);color:var(--faint)}
+.dream h3{font:italic 400 28px var(--serif);margin:65px 0 10px}
+.dream p{font-size:14px;color:var(--muted);margin:0}
+@media(max-width:800px){.dreams{grid-template-columns:1fr}.dream{min-height:210px}.dream h3{margin-top:45px}}
+
+/* Constellation */
+#remember{background:linear-gradient(180deg,#0a1025,#080510)}
+.remember-title{font:italic 400 clamp(46px,8vw,90px)/1 var(--serif);margin:0}
+.constellation{
+  position:relative;height:470px;margin-top:55px;border-radius:26px;
+  border:1px solid rgba(255,255,255,.08);overflow:hidden;
+  background:radial-gradient(circle at 50% 50%,rgba(115,87,255,.12),transparent 35%),rgba(255,255,255,.015);
+}
+.constellation:before{content:"";position:absolute;inset:0;background-image:
+ radial-gradient(circle,rgba(255,255,255,.5) 1px,transparent 1px);
+ background-size:80px 80px;opacity:.12}
+.star{position:absolute;width:10px;height:10px;border-radius:50%;background:white;
+ box-shadow:0 0 20px 7px rgba(155,108,255,.45);animation:pulse 3s infinite;cursor:pointer}
+.star:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:0;background:linear-gradient(transparent,var(--pink));transition:.5s}
+.star:hover{transform:scale(1.7)}
+.memory-label{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;
+ font:italic 400 clamp(27px,4vw,48px) var(--serif);color:rgba(255,255,255,.75);pointer-events:none
+}
+@keyframes pulse{50%{box-shadow:0 0 28px 10px rgba(255,95,162,.35)}}
+.s1{left:16%;top:25%}.s2{left:37%;top:63%;animation-delay:-.8s}.s3{left:60%;top:22%;animation-delay:-1.5s}.s4{left:78%;top:56%;animation-delay:-2.2s}.s5{left:51%;top:82%;animation-delay:-2.8s}
+.star-tip{
+ position:fixed;z-index:70;pointer-events:none;opacity:0;transform:translate(-50%,-135%) translateY(7px);
+ padding:9px 13px;border-radius:999px;background:rgba(10,7,20,.86);border:1px solid rgba(255,255,255,.15);
+ backdrop-filter:blur(12px);font:500 10px var(--mono);letter-spacing:.04em;transition:.25s var(--ease);white-space:nowrap
+}
+.star-tip.show{opacity:1;transform:translate(-50%,-135%)}
+@media(max-width:700px){.constellation{height:420px}.star{width:12px;height:12px}}
+
+/* Final */
+#final{
+  min-height:110vh;text-align:center;
+  background:
+   radial-gradient(circle at 50% 30%,rgba(155,108,255,.20),transparent 30%),
+   radial-gradient(circle at 50% 75%,rgba(255,95,162,.12),transparent 30%),
+   #05030b;
+}
+.final-title{font:italic 500 clamp(58px,11vw,140px)/.9 var(--serif);margin:0;letter-spacing:-.05em}
+.final-title small{display:block;font:500 10px var(--mono);letter-spacing:.3em;color:var(--faint);margin-bottom:30px}
+.final-copy{max-width:650px;margin:42px auto 0;font-size:clamp(17px,2.2vw,21px);color:var(--muted)}
+.final-button{
+ margin-top:60px;padding:15px 27px;border:1px solid rgba(255,255,255,.17);border-radius:999px;
+ background:rgba(255,255,255,.04);font:500 10px var(--mono);letter-spacing:.2em;text-transform:uppercase;
+ transition:.4s var(--ease)
+}
+.final-button:hover{background:rgba(155,108,255,.10);border-color:rgba(155,108,255,.5);transform:translateY(-3px)}
+.final-reveal{max-height:0;opacity:0;overflow:hidden;transition:1.4s var(--ease)}
+.final-reveal.open{max-height:520px;opacity:1;margin-top:45px}
+.final-reveal p{font:italic 400 clamp(22px,3vw,32px)/1.7 var(--serif);margin:0 0 10px}
+.final-reveal .last{font-size:12px;font-family:var(--mono);font-style:normal;letter-spacing:.15em;color:var(--faint);margin-top:28px}
+
+/* footer */
+footer{text-align:center;padding:40px 20px 70px;background:#05030b;color:var(--faint);font:500 9px var(--mono);letter-spacing:.18em}
+
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+ .reveal{opacity:1;transform:none;filter:none}
+ .light{display:none}
+}
+</style>
+</head>
+
+<body class="lock">
+<div class="noise"></div>
+<div class="ambient"></div>
+<div class="light" id="light"></div>
+<canvas id="stars"></canvas>
+
+<!-- Opening gate -->
+<section id="gate" aria-label="Opening">
+  <div class="gate-aurora"></div>
+  <div class="gate-content">
+    <div class="gate-date">07 AUGUST · 03:00 AM</div>
+    <div class="gate-for">for</div>
+    <div class="gate-name gradient">Venu.</div>
+    <div class="gate-sub">Some words were late. They were never meant to stay unsaid.</div>
+    <div class="enter"><button id="enter">Enter this little universe →</button></div>
+  </div>
+</section>
+
+<div class="progress" id="progress">
+  <span id="pageNo">01</span><div class="bar"><div class="fill" id="fill"></div></div><span>11</span>
+</div>
+
+<main id="main">
+
+<section class="section" id="opening">
+  <div class="orb purple" style="width:420px;height:420px;left:-12%;top:15%"></div>
+  <div class="orb pink" style="width:350px;height:350px;right:-8%;bottom:8%"></div>
+  <div class="inner">
+    <p class="eyebrow reveal">a thought that took too long</p>
+    <h1 class="opening-title reveal">I didn't know<br><span class="gradient">how to say it.</span></h1>
+    <p class="opening-copy reveal">
+      So I built a place where the words could take their time.
+      Not to change anything. Not to ask for anything.
+      Just to finally be honest.
+    </p>
+    <div class="scroll-cue reveal"><i></i> SCROLL SLOWLY</div>
+  </div>
+</section>
+
+<section class="section" id="night">
+  <div class="orb purple" style="width:400px;height:400px;left:-14%;top:10%"></div>
+  <div class="orb blue" style="width:330px;height:330px;right:-10%;bottom:5%"></div>
+  <div class="inner">
+    <p class="eyebrow reveal">07.08 · 03:00 AM</p>
+    <div class="log reveal">
+      <div class="log-top"><span>SYSTEM MEMORY / VENU</span><span class="status" id="status">INCOMPLETE</span></div>
+      <div class="log-body" id="log">
+        <div class="log-line"><span class="prompt">›</span> starting something important…</div>
+        <div class="log-line"><span class="prompt">›</span> intention: say what I couldn't</div>
+        <div class="log-line"><span class="prompt">›</span> looking back without excuses</div>
+        <div class="log-line"><span class="prompt">›</span> remembering what matters</div>
+        <div class="log-line"><span class="prompt">›</span> status: waiting for the right words</div>
+      </div>
+    </div>
+    <p class="night-thought reveal">
+      I tried. <em>I couldn't.</em><br>
+      Not because it didn't matter —<br>
+      but because I didn't know how to build it yet.<br>
+      <span class="gradient">Today, I do.</span>
+    </p>
+    <p class="night-note reveal">
+      There are some things you understand only after you have had enough time
+      to look at your own actions without defending them.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="venu">
+  <div class="orb purple" style="width:520px;height:520px;left:50%;top:50%;transform:translate(-50%,-50%)"></div>
+  <div class="orb pink" style="width:300px;height:300px;right:0;top:15%"></div>
+  <div class="inner">
+    <div class="name-kicker reveal">her name is</div>
+    <h2 class="venu-name gradient reveal">Venu</h2>
+    <p class="venu-sub reveal"><b>Chetana Rajput</b> to the world.<br>Venu to the people who know her differently.</p>
+    <div class="traits reveal">
+      <span class="trait">Confident</span><span class="trait">Dashing</span>
+      <span class="trait">Real</span><span class="trait">Unscripted</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="photos">
+  <div class="orb pink" style="width:400px;height:400px;left:-10%;top:5%"></div>
+  <div class="orb" style="width:360px;height:360px;right:-8%;bottom:2%;background:var(--gold)"></div>
+  <div class="inner">
+    <div class="photo-intro">
+      <div>
+        <p class="eyebrow reveal">two little windows</p>
+        <h2 class="photo-title reveal">The person<br><span class="gradient">behind the name.</span></h2>
+      </div>
+      <p class="photo-copy reveal">No perfect poses. No script. Just two moments that felt worth keeping here.</p>
+    </div>
+    <div class="gallery">
+      <figure class="photo-card photo-one reveal">
+        <img src="IMG_0269.jpeg" alt="Venu" loading="lazy">
+        <span class="photo-number">01 / UNSCRIPTED</span>
+        <figcaption class="photo-caption">Just being you.</figcaption>
+      </figure>
+      <figure class="photo-card photo-two reveal">
+        <img src="IMG_0270.jpeg" alt="Venu smiling" loading="lazy">
+        <span class="photo-number">02 / A MOMENT</span>
+        <figcaption class="photo-caption">That smile.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="thoughts">
+  <div class="orb blue" style="width:400px;height:400px;left:-12%;bottom:5%"></div>
+  <div class="orb pink" style="width:350px;height:350px;right:-10%;top:10%"></div>
+  <div class="inner thought-grid">
+    <div>
+      <p class="eyebrow reveal">what I think now</p>
+      <h2 class="big-thought reveal">Sometimes the apology comes after the lesson.</h2>
+    </div>
+    <div class="thought-text reveal">
+      <p>I spent a lot of time thinking about what happened, and even more time thinking about why I behaved the way I did.</p>
+      <p>But understanding myself doesn't erase the effect my actions had on you.</p>
+      <p>That's the part I needed to learn: <b>intent and impact are not always the same thing.</b></p>
+      <div class="quote">“I can understand where I came from without using it as an excuse for where I took you.”</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="apology">
+  <div class="orb pink" style="width:440px;height:440px;left:-12%;bottom:-5%"></div>
+  <div class="orb" style="width:300px;height:300px;right:-5%;top:-5%;background:var(--gold)"></div>
+  <div class="inner">
+    <p class="eyebrow reveal">the part I owe you</p>
+    <h2 class="apology-head reveal">There is something I should have said much earlier.</h2>
+    <div class="letter reveal">
+      <p class="hello">Venu,</p>
+      <p>I am genuinely sorry for the way I treated you a few months ago.</p>
+      <p>Things from my past affected the way I thought, reacted, and behaved. But that explains where my head was — it does not excuse the way I made you feel.</p>
+      <p class="strong">The mistake was mine.</p>
+      <p>And what hurts me most is knowing that someone who gave me a real, genuine friendship ended up getting hurt because I didn't handle my own past properly.</p>
+      <p>You deserved better from me in those moments.</p>
+      <p>I don't want this apology to become another thing that puts pressure on you. You don't owe me forgiveness, a reply, an explanation, or a particular feeling.</p>
+      <p>I only wanted to take responsibility for my part — without excuses, without hiding behind the past.</p>
+      <p>Our conversations, the trust, the random moments, the comfort of having a person who was simply there — those things had value to me. They still do.</p>
+      <p class="sorry gradient">I'm genuinely sorry, Venu.</p>
+      <p class="sign">No conditions. No expectations. Just honesty.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="mindset">
+  <div class="inner mindset-wrap">
+    <div>
+      <p class="eyebrow reveal">the mindset after looking back</p>
+      <h2 class="big-thought reveal">I don't want to be the person who repeats a mistake just because it is easier than changing.</h2>
+    </div>
+    <div class="mindset-list">
+      <div class="mind-card reveal"><b>Own it.</b><span>If I hurt someone, the first responsibility is mine — not theirs.</span></div>
+      <div class="mind-card reveal"><b>Learn from it.</b><span>Regret is useful only when it becomes awareness, patience, and better choices.</span></div>
+      <div class="mind-card reveal"><b>Don't rewrite history.</b><span>The good moments don't erase the bad ones, and the bad ones don't erase the good ones.</span></div>
+      <div class="mind-card reveal"><b>Give people space.</b><span>An apology should open a door, not push someone through it.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="space">
+  <div class="inner">
+    <p class="eyebrow reveal" style="justify-content:center">nothing hidden between the lines</p>
+    <h2 class="space-title reveal">
+      <span>No expectations.</span>
+      <span class="pink">No pressure.</span>
+      <span class="gold">Just one honest apology.</span>
+    </h2>
+    <p class="space-copy reveal">
+      I don't want a webpage to decide the future of our friendship.
+      I only wanted to finally say the words I was too late to say properly.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="dreams">
+  <div class="inner">
+    <p class="eyebrow reveal">for the road ahead</p>
+    <h2 class="dream-head reveal">I hope life gives you beautiful things you don't have to ask for.</h2>
+    <p class="dream-intro reveal">
+      This isn't me writing your future for you. Your dreams belong to you.
+      These are simply a few wishes I would quietly make for someone I genuinely care about.
+    </p>
+    <div class="dreams">
+      <article class="dream reveal"><span class="dream-num">01</span><h3>Peace</h3><p>May your mind find quiet on the days when everything feels too loud.</p></article>
+      <article class="dream reveal"><span class="dream-num">02</span><h3>Big dreams</h3><p>May you chase the things that make you feel alive, even when the path isn't obvious.</p></article>
+      <article class="dream reveal"><span class="dream-num">03</span><h3>Good people</h3><p>May the people around you always make you feel respected, understood, and valued.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="remember">
+  <div class="inner">
+    <p class="eyebrow reveal">things worth remembering</p>
+    <h2 class="remember-title reveal">Not every important thing needs a photograph.</h2>
+    <div class="constellation reveal" id="constellation">
+      <div class="memory-label">some things<br><span class="gradient">stay.</span></div>
+      <button class="star s1" data-tip="The conversations."></button>
+      <button class="star s2" data-tip="The laughter."></button>
+      <button class="star s3" data-tip="The random moments."></button>
+      <button class="star s4" data-tip="The friendship."></button>
+      <button class="star s5" data-tip="The fact that you mattered."></button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="final">
+  <div class="inner">
+    <h2 class="final-title reveal">
+      <small>one last thing</small>
+      Some people<br><span class="gradient">matter.</span>
+    </h2>
+    <p class="final-copy reveal">
+      And you are one of those people.<br><br>
+      Whatever happens next, I'm grateful that our friendship happened.
+      I would rather remember it with honesty than pretend I never cared enough to say sorry.
+    </p>
+    <button class="final-button reveal" id="lastButton">Open the last thought →</button>
+    <div class="final-reveal" id="lastThought">
+      <p>Thank you for being Venu.</p>
+      <p>I'm sorry I didn't understand your value sooner.</p>
+      <p class="last">07 AUGUST · 03:00 AM — the unfinished thought, finally finished.</p>
+    </div>
+  </div>
+</section>
+
+<footer>MADE WITH THOUGHT · NOT EXPECTATION · FOR VENU</footer>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const gate = document.getElementById("gate");
+  const enter = document.getElementById("enter");
+  const body = document.body;
+  const light = document.getElementById("light");
+  const progress = document.getElementById("progress");
+  const pageNo = document.getElementById("pageNo");
+  const fill = document.getElementById("fill");
+  const sections = [...document.querySelectorAll("main > section")];
+
+  enter.addEventListener("click", () => {
+    gate.classList.add("out");
+    body.classList.remove("lock");
+    setTimeout(() => document.getElementById("opening").scrollIntoView({behavior:"smooth"}), 260);
+  });
+
+  window.addEventListener("keydown", e => {
+    if((e.key === "Enter" || e.key === " ") && !gate.classList.contains("out")){
+      e.preventDefault(); enter.click();
+    }
+  });
+
+  if(!reduce && matchMedia("(hover:hover)").matches){
+    window.addEventListener("pointermove", e => {
+      light.style.left = e.clientX + "px";
+      light.style.top = e.clientY + "px";
+    }, {passive:true});
+  } else light.style.display="none";
+
+  const reveal = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) e.target.classList.add("show");
+    });
+  }, {threshold:.14, rootMargin:"0px 0px -7% 0px"});
+  document.querySelectorAll(".reveal").forEach(el => reveal.observe(el));
+
+  const logLines = [...document.querySelectorAll(".log-line")];
+  const logBox = document.getElementById("log");
+  const status = document.getElementById("status");
+  let logDone=false;
+  const logObserver = new IntersectionObserver(entries => {
+    if(!entries[0].isIntersecting || logDone) return;
+    logDone=true;
+    logLines.forEach((line,i)=>setTimeout(()=>line.classList.add("show"), i*420));
+    setTimeout(()=>{status.textContent="PROCESSING";status.style.color="var(--gold)"},1450);
+    setTimeout(()=>{status.textContent="READY";status.style.color="var(--cyan)"},2600);
+  },{threshold:.35});
+  logObserver.observe(logBox);
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const idx=sections.indexOf(e.target)+1;
+        pageNo.textContent=String(idx).padStart(2,"0");
+      }
+    });
+  },{threshold:.52});
+  sections.forEach(s=>io.observe(s));
+
+  function updateProgress(){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    fill.style.height=(max>0?(scrollY/max)*100:0)+"%";
+  }
+  addEventListener("scroll",updateProgress,{passive:true});
+  updateProgress();
+
+  // constellation tooltip
+  const tip=document.createElement("div");
+  tip.className="star-tip"; document.body.appendChild(tip);
+  document.querySelectorAll(".star").forEach(star=>{
+    const show=()=>{
+      tip.textContent=star.dataset.tip;
+      const r=star.getBoundingClientRect();
+      tip.style.left=(r.left+r.width/2)+"px";
+      tip.style.top=r.top+"px";
+      tip.classList.add("show");
+    };
+    star.addEventListener("mouseenter",show);
+    star.addEventListener("focus",show);
+    star.addEventListener("mouseleave",()=>tip.classList.remove("show"));
+    star.addEventListener("blur",()=>tip.classList.remove("show"));
+    star.addEventListener("click",show);
+  });
+
+  document.getElementById("lastButton").addEventListener("click", e=>{
+    document.getElementById("lastThought").classList.toggle("open");
+    e.currentTarget.textContent = document.getElementById("lastThought").classList.contains("open")
+      ? "Keep this thought ↗" : "Open the last thought →";
+  });
+
+  // Lightweight stars / particles
+  const canvas=document.getElementById("stars"), ctx=canvas.getContext("2d");
+  let dots=[];
+  function resize(){
+    const d=Math.min(devicePixelRatio||1,2);
+    canvas.width=innerWidth*d; canvas.height=innerHeight*d;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px";
+    ctx.setTransform(d,0,0,d,0,0);
+    dots=Array.from({length:innerWidth<700?42:75},()=>({
+      x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+      r:Math.random()*1.4+.25,a:Math.random()*.55+.1,
+      s:Math.random()*.18+.025
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    dots.forEach(d=>{
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(220,205,255,${d.a})`;ctx.fill();
+      d.y-=d.s;
+      if(d.y<-5)d.y=innerHeight+5;
+    });
+    if(!reduce) requestAnimationFrame(draw);
+  }
+  resize(); if(!reduce) draw(); addEventListener("resize",resize);
+
+})();
+</script>
+</body>
+</html>
